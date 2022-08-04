@@ -1,0 +1,39 @@
+Stuff that needs to be done to run this case
+
+-- COMPILE --
+make TPL -j
+make -j
+
+-- Generate Turbulence initial condition --
+python gen_hit_ic.py -k0 4 -N 128
+
+-- Run --
+srun -n 36 PeleLMeX2d.gnu.TPROF.MPI.ex input.nn
+
+
+#### NOTES ####
+Contained are files to run with an FGM+ANN model trained on a 1D premixed flame
+and a CMLM model trained from corresponding 3D DNS
+
+Required files include a pmf data file used to set the initial condition.
+In the input.nn file, set either
+
+   pmf.datafile =  "prem_posf10325_phi1_p1_t298_mani_cmlm.dat"
+-- OR --
+   pmf.datafile =  "prem_posf10325_phi1_p1_t298_mani_fgm.dat"
+
+Also required are a neural network file and info file.
+In the input.nn file, set either
+
+   manifold.filename = cmlm_net.pnn
+   manifold.info_filename = cmlm_net_info.txt
+-- OR --
+   manifold.filename = fgm_net.pnn
+   manifold.info_filename = fgm_net_info.txt
+
+Note that the CMLM model is a 2D manifold while the FGM one is a 1D manifold.
+This means the correct setting must be used in the GNUmakefile when compiling:
+
+   Chemistry_Model = Manifold2d
+-- OR --
+   Chemistry_Model = Manifold

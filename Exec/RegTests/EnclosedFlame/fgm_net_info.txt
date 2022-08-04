@@ -1,0 +1,18 @@
+# Name of the neural network model
+model_name = premixed
+# Number of input dimensions
+ndim = 1
+# Number of output dimensions
+nvar = 15
+# Number of manifold parameters
+nmanpar = 1
+# Names of input variables
+dimnames = xi0
+# Names of output variables
+varnames = Y-CO2 Y-CO Y-CH2O SRC_H2O SRC_H2 SRC_CO2 SRC_CO SRC_POSF10325 SRC_O2 T RHO lnRHO DIFF \
+           VISC SRC_xi0
+# Definitions of input variables
+def_xi0 = 15.390820503234863*Y-CO2 15.390820503234863*Y-H2 0.0*Y-N2 15.390819549560547*Y-CO \
+          0.0*Y-O2 15.390820503234863*Y-H2O 0.0*Y-POSF10325
+# Biases to be used calculating input variables
+manibiases = -2.206676721572876

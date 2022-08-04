@@ -1,0 +1,115 @@
+#----------------------DOMAIN DEFINITION------------------------
+#geometry.is_periodic = 1 1               # For each dir, 0: non-perio, 1: periodi
+geometry.is_periodic = 0 0               # For each dir, 0: non-perio, 1: periodic
+geometry.coord_sys   = 0                  # 0 => cart, 1 => RZ
+geometry.prob_lo     = 0.0 0.0 0.0        # x_lo y_lo (z_lo)
+geometry.prob_hi     = 0.02 0.02 0.016        # x_hi y_hi (z_hi)
+
+# >>>>>>>>>>>>>  BC FLAGS <<<<<<<<<<<<<<<<
+# Interior, Inflow, Outflow, Symmetry,
+# SlipWallAdiab, NoSlipWallAdiab, SlipWallIsotherm, NoSlipWallIsotherm
+#peleLM.lo_bc = Interior Interior
+#peleLM.hi_bc = Interior Interior
+
+peleLM.lo_bc = Outflow Outflow
+peleLM.hi_bc = Outflow Outflow
+
+
+#-------------------------AMR CONTROL----------------------------
+amr.n_cell          = 128 128 32      # Level 0 number of cells in each direction
+amr.v               = 1                # AMR verbose
+amr.max_level       = 3             # maximum level number allowed
+amr.ref_ratio       = 2 2 2 2 2         # refinement ratio
+amr.regrid_int      = 5                # how often to regrid
+amr.n_error_buf     = 2 2 2 2          # number of buffer cells in error est
+amr.grid_eff        = 0.7              # what constitutes an efficient grid
+amr.blocking_factor = 16               # block factor in grid generation (min box size)
+amr.max_grid_size   = 128               # max box size
+
+
+#--------------------------- Problem -------------------------------
+prob.P_mean = 101325.0
+prob.standoff = -0.0175
+prob.flame_radius = 0.001
+prob.pertmag = 0.0 #0.0002
+pmf.datafile =  "prem_posf10325_phi1_p1_t298.dat"
+pmf.do_cellAverage = 0
+
+#-------------------------PeleLM CONTROL----------------------------
+peleLM.v = 2
+peleLM.incompressible = 0
+peleLM.rho = 1.17
+peleLM.mu = 0.0
+peleLM.sdc_iterMax = 2
+peleLM.floor_species = 0
+peleLM.num_divu_iter = 1
+peleLM.num_init_iter = 3
+
+peleLM.do_temporals = 0
+peleLM.temporal_int = 2
+peleLM.mass_balance = 1
+
+# amr.restart = chk00100
+amr.check_int = 100
+amr.plot_int = 10
+amr.max_step = 1000
+amr.dt_shrink = 0.01
+amr.stop_time = 1.0
+#amr.stop_time = 1.00
+amr.cfl = 0.15
+amr.derive_plot_vars = avg_pressure mag_vort mass_fractions inst_src_spec
+
+# --------------- INPUTS TO CHEMISTRY REACTOR ---------------
+peleLM.chem_integrator = "ReactorCvode"
+peleLM.use_typ_vals_chem = 1          # Use species/temp typical values in CVODE
+ode.rtol = 1.0e-6                     # Relative tolerance of the chemical solve
+ode.atol = 1.0e-5                     # Absolute tolerance factor applied on typical values
+cvode.solve_type = denseAJ_direct     # CVODE Linear solve type (for Newton direction)
+cvode.max_order  = 4                  # CVODE max BDF order.
+
+#--------------------REFINEMENT CONTROL------------------------
+
+amr.refinement_indicators = magVort temp tempval
+amr.magVort.max_level     = 1
+amr.magVort.value_greater = 5000.0
+amr.magVort.field_name    = mag_vort
+
+amr.temp.max_level     = 3
+amr.temp.adjacent_difference_greater = 25
+amr.temp.field_name    = temp
+
+amr.tempval.max_level     = 2
+amr.tempval.value_greater = 150000
+amr.tempval.field_name    = temp
+
+#amr.refinement_indicators = yH
+#amr.yH.max_level     = 5
+#amr.yH.value_greater = 3.0e-7
+#amr.yH.field_name    = Y(H)
+
+
+#--------------------LINEAR SOLVER CONTROL------------------------
+nodal_proj.verbose = 2
+nodal_proj.rtol = 2.0e-11
+amrex.fpe_trap_invalid = 1
+amrex.fpe_trap_zero = 1
+amrex.fpe_trap_overflow = 1
+
+peleLM.use_wbar = 1
+
+
+# ----------------------- HIT IC ----------------------------
+ic.hitIC = 1
+ic.input_resolution = 128
+ic.uin_norm = 1.0
+ic.urms0 = 2.0
+#ic.lscale = 25.132741228718
+ic.lscale = 12.56637061436
+#ic.lscale = 6.283185307179
+#ic.lscale = 3.1415926536
+#ic.lscale = 1.57079632679489662
+ic.offset = 0 #-0.031415926536
+ic.input_name = hit_ic_4_128.dat
+ic.input_binaryformat = 0
+ic.buffer_boundary = 0.25
+ic.buffer_thickness = 0.03
